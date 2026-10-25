@@ -1,0 +1,34 @@
+
+name: Build Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build website
+        run: |
+          mkdir build
+          cp index.html build/
+          echo "Build successful"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test website
+        run: grep -q "My GitLab CI/CD Project" index.html
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deployment message
+        run: echo "Deployment successful"
